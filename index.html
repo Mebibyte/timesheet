@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Are timesheets due?</title>
+	</head>
+	<body bgcolor="#000000">
+		<div style="margin:30px auto 0px auto; text-align:center; color:#FFFFFF">
+			<h1 style="font-size:100px">
+				<span id="answer">No</span>
+			</h1>
+			<h2 style="font-size:20px">
+				<span id="next">Next timesheet is due on blah</span>
+			</h2>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var d = new Date();
+		document.getElementById("next").innerHTML = "Next timesheet is due on " + d.toDateString();
+	</script>
+</html>
