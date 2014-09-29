@@ -41,7 +41,7 @@
       var apiKey = 'AIzaSyCABlhOajG7JVViO_M7Jzaha_xVa9-awQk';
 
       // To enter one or more authentication scopes, refer to the documentation for the API.
-      var scopes = 'https://www.googleapis.com/auth/plus.me';
+      var scopes = 'https://www.googleapis.com/auth/calendar.readonly';
 
       // Use a button to handle authentication the first time.
       function handleClientLoad() {
@@ -72,18 +72,10 @@
 
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
-        gapi.client.load('plus', 'v1', function() {
-          var request = gapi.client.plus.people.get({
-            'userId': 'me'
-          });
+        gapi.client.load('calendar', 'v3', function() {
+          var request = gapi.client.calendarList.list();
           request.execute(function(resp) {
-            var heading = document.createElement('h4');
-            var image = document.createElement('img');
-            image.src = resp.image.url;
-            heading.appendChild(image);
-            heading.appendChild(document.createTextNode(resp.displayName));
-
-            document.getElementById('content').appendChild(heading);
+            Console.log(resp);
           });
         });
       }
