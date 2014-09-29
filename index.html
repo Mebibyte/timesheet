@@ -5,7 +5,7 @@
 		<title>Are timesheets due?</title>
 	</head>
 	<body bgcolor="#000000">
-		<div style="margin:30px auto 0px auto; text-align:center; color:#FFFFFF">
+		<div id="answerDiv" style="margin:30px auto 0px auto; text-align:center; color:#FFFFFF">
 			<h1 style="font-size:100px">
 				<span id="answer">No</span>
 			</h1>
@@ -21,11 +21,13 @@
 		while (timesheet < today) {
 			timesheet.setDate(timesheet.getDate() + 14);
 		}
-		if (timesheet == today) {
+		var days = Math.round(Math.abs((timesheet.getTime() - today.getTime())/(86400000)));
+		if (days === 0) {
+			document.body.style.background = "#FFFFFF";
+			document.getElementById("answerDiv").style.color = "#000000";
 			document.getElementById("answer").innerHTML = "YES!";
 			document.getElementById("next").innerHTML = "Turn your timesheet in before the end of the day!"
 		} else {
-			var days = Math.round(Math.abs((timesheet.getTime() - today.getTime())/(86400000)));
 			document.getElementById("next").innerHTML = "Next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " days!";
 		}
 	</script>
