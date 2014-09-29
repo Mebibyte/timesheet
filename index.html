@@ -17,7 +17,7 @@
 	</body>
 	<script type="text/javascript">
 		var months = ["January", "Februray", "March", "April", "May", "June", "July", "August", "September", "October", "Novemeber", "December"];
-		var today = new Date();
+		var today = new Date(2014, 9, 1);
 		var timesheet = new Date(2014, 9, 1);
 		while (timesheet < today) {
 			timesheet.setDate(timesheet.getDate() + 14);
@@ -28,8 +28,10 @@
 			document.getElementById("answerDiv").style.color = "#000000";
 			document.getElementById("answer").innerHTML = "YES!";
 			document.getElementById("next").innerHTML = "Turn your timesheet in before the end of the day!"
+            enableSnow = true;
 		} else {
 			document.getElementById("next").innerHTML = "Next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + "!";
 		}
 	</script>
+    <script src="moneyfall.js"></script>
 </html>
