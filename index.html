@@ -9,12 +9,13 @@
 			<h1 style="font-size:100px">
 				<span id="answer">No</span>
 			</h1>
-			<h2 style="font-size:20px">
+			<h2 style="font-size:18px">
 				<span id="next">Next timesheet is due on blah</span>
 			</h2>
 		</div>
 	</body>
 	<script type="text/javascript">
+		var months = ["January", "Februray", "March", "April", "May", "June", "July", "August", "September", "October", "Novemeber", "December"];
 		var today = new Date();
 		var timesheet = new Date(2014, 9, 1);
 		while (timesheet < today) {
@@ -23,6 +24,6 @@
 		if (timesheet == today) {
 			document.getElementById("answer").innerHTML = "YES!";
 		}
-		document.getElementById("next").innerHTML = "Next timesheet is due on " + timesheet.toDateString();
+		document.getElementById("next").innerHTML = "Next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear();
 	</script>
 </html>
