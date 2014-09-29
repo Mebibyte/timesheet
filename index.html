@@ -21,7 +21,7 @@
 		while (timesheet < today) {
 			timesheet.setDate(timesheet.getDate() + 14);
 		}
-		var days = Math.round(Math.abs((timesheet.getTime() - today.getTime())/(86400000)));
+		var days = Math.ceil((timesheet.getTime() - today.getTime())/(86400000));
 		if (days === 0) {
 			document.body.style.background = "#FFFFFF";
 			document.getElementById("answerDiv").style.color = "#000000";
