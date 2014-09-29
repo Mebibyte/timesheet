@@ -15,7 +15,14 @@
 		</div>
 	</body>
 	<script type="text/javascript">
-		var d = new Date();
-		document.getElementById("next").innerHTML = "Next timesheet is due on " + d.toDateString();
+		var today = new Date();
+		var timesheet = new Date(2014, 10, 1);
+		while (timesheet < today) {
+			timesheet.setDate(timesheet.getDate() + 14);
+		}
+		if (timesheet == today) {
+			document.getElementById("answer").innerHTML = "YES!";
+		}
+		document.getElementById("next").innerHTML = "Next timesheet is due on " + timesheet.toDateString();
 	</script>
 </html>
