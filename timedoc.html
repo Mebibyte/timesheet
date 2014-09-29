@@ -73,7 +73,7 @@
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
         gapi.client.load('calendar', 'v3', function() {
-          var request = gapi.client.calendarList.list();
+          var request = gapi.client.calendar.list();
           request.execute(function(resp) {
             Console.log(resp);
           });
