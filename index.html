@@ -28,7 +28,7 @@
 			document.getElementById("answer").innerHTML = "YES!";
 			document.getElementById("next").innerHTML = "Turn your timesheet in before the end of the day!"
 		} else {
-			document.getElementById("next").innerHTML = "Next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " days!";
+			document.getElementById("next").innerHTML = "Next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + "!";
 		}
 	</script>
 </html>
