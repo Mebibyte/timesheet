@@ -33,19 +33,11 @@
       // where you will be running the script.
       var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
 
-      // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
-      // requests in the code.
-      // The provided key works for this sample only when run from
-      // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
-      // To use in your own application, replace this API key with your own.
-      var apiKey = 'AIzaSyCABlhOajG7JVViO_M7Jzaha_xVa9-awQk';
-
       // To enter one or more authentication scopes, refer to the documentation for the API.
       var scopes = 'https://www.googleapis.com/auth/calendar.readonly';
 
       // Use a button to handle authentication the first time.
       function handleClientLoad() {
-        gapi.client.setApiKey(apiKey);
         window.setTimeout(checkAuth,1);
       }
 
