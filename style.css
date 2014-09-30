@@ -1,0 +1,38 @@
+* {
+	margin: 0;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	background-color: #000000;
+}
+
+h1 {
+	font-size: 100px;
+}
+
+h2 {
+	font-size: 18px;
+}
+
+#answerDiv {
+	padding: 50px 0px 25px 0px;
+}
+
+.wrapper {
+	text-align: center;
+	color: #FFFFFF;
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -4em;
+}
+
+.footer, .push {
+	text-align: center;
+	color: #FFFFFF;
+	height: 0em;
+}
