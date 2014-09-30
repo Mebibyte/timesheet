@@ -48,15 +48,18 @@
               }
             }
             if (id !== null) {
-              var request = gapi.client.calendar.events.list(id);
-              request.execute(function(resp) {
-                var events;
-                for (i = 0; i < resp.items.length; i++) {
-                  if (resp.items[i].start.dateTime >= new Date(2014, 8, 18) && resp.items[i].start.dateTime <= new Date(2014, 9, 2)) {
-                    events += rasp.items[i].summary;
+              gapi.client.calendar.events.list({
+                'calendarId': id,
+                'timeMin': "2014-9-17T16:35:00-05:00",
+                'timeMax': "2014-10-2T16:35:00-05:00",
+                'singleEvents': true
+              }).execute(function(resp) {
+                  console.log(resp);
+                  var events = "";
+                  for (i = 0; i < resp.items.length; i++) {
+                    events += resp.items[i].summary + " hours: " + ((new Date(resp.items[i].end.dateTime) - new Date(resp.items[i].start.dateTime)) / 3600000) + "<br>";
                   }
-                }
-                document.getElementById("content").innerHTML = events
+                  document.getElementById("content").innerHTML = events;
               });
             }
           });
