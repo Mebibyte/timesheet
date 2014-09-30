@@ -42,6 +42,9 @@
           request.execute(function(resp) {
             console.log(resp.items);
             for (i = 0; i < resp.items.length; i++) {
+              if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
+                console.log("Found TA calendar! ");
+              }
               console.log(resp.items[i]);
               console.log(resp.items[i].summary)
             }
