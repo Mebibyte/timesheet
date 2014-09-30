@@ -27,7 +27,7 @@
 		var months = ["January", "Februray", "March", "April", "May", "June", "July", "August", "September", "October", "Novemeber", "December"];
 		var today = new Date();
 		var timesheet = new Date(2014, 9, 1);
-		while (timesheet < today) {
+		while ((timesheet + 1) < today) {
 			timesheet.setDate(timesheet.getDate() + 14);
 		}
 		var days = Math.ceil((timesheet.getTime() - today.getTime())/(86400000));

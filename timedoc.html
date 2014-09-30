@@ -37,10 +37,18 @@
 
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
+        var today = new Date();
+        var timesheet = new Date(2014, 9, 1);
+        while ((timesheet + 1) < today) {
+          timesheet.setDate(timesheet.getDate() + 14);
+        }
+        var start = new Date(timesheet);
+        start.setDate(start.getDate() - 13);
+        timesheet.setDate(timesheet.getDate() + 1);
+
         gapi.client.load('calendar', 'v3', function() {
           var request = gapi.client.calendar.calendarList.list();
           request.execute(function(resp) {
-            console.log(resp.items);
             var id = null;
             for (i = 0; i < resp.items.length; i++) {
               if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
@@ -50,16 +58,37 @@
             if (id !== null) {
               gapi.client.calendar.events.list({
                 'calendarId': id,
-                'timeMin': "2014-9-17T16:35:00-05:00",
-                'timeMax': "2014-10-2T16:35:00-05:00",
-                'singleEvents': true
+                'timeMin': start.toISOString(),
+                'timeMax': timesheet.toISOString(),
+                'singleEvents': true,
+                'orderBy': "startTime"
               }).execute(function(resp) {
-                  console.log(resp);
+                  var hoursString = "";
+                  var dayHours = 0;
+                  var weekHours = 0;
+                  var totalHours = 0;
                   var events = "";
+                  var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                   for (i = 0; i < resp.items.length; i++) {
-                    events += resp.items[i].summary + " hours: " + ((new Date(resp.items[i].end.dateTime) - new Date(resp.items[i].start.dateTime)) / 3600000) + "<br>";
+                    var item = resp.items[i];
+                    while (new Date(item.start.dateTime).getDay() != start.getDay()) {
+                      hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+                      start.setDate(start.getDate() + 1);
+                      dayHours = 0;
+                      if (start.getDay() === 4) {
+                        hoursString += "Total for week: " + weekHours + "<br>";
+                        weekHours = 0;
+                      }
+                    }
+                    var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
+                    dayHours += tempHours;
+                    weekHours += tempHours;
+                    totalHours += tempHours;
+                    events += resp.items[i].summary + " hours: " + tempHours + "<br>";
                   }
-                  document.getElementById("content").innerHTML = events;
+                  hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+                  hoursString += "Total for week: " + weekHours + "<br>";
+                  document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
               });
             }
           });
