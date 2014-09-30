@@ -49,6 +49,7 @@
         gapi.client.load('calendar', 'v3', function() {
           var request = gapi.client.calendar.calendarList.list();
           request.execute(function(resp) {
+            console.log(resp);
             var id = null;
             for (i = 0; i < resp.items.length; i++) {
               if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
@@ -63,32 +64,33 @@
                 'singleEvents': true,
                 'orderBy': "startTime"
               }).execute(function(resp) {
-                  var hoursString = "";
-                  var dayHours = 0;
-                  var weekHours = 0;
-                  var totalHours = 0;
-                  var events = "";
-                  var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                  for (i = 0; i < resp.items.length; i++) {
-                    var item = resp.items[i];
-                    while (new Date(item.start.dateTime).getDay() != start.getDay()) {
-                      hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
-                      start.setDate(start.getDate() + 1);
-                      dayHours = 0;
-                      if (start.getDay() === 4) {
-                        hoursString += "Total for week: " + weekHours + "<br>";
-                        weekHours = 0;
-                      }
+                console.log(resp);
+                var hoursString = "";
+                var dayHours = 0;
+                var weekHours = 0;
+                var totalHours = 0;
+                var events = "";
+                var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                for (i = 0; i < resp.items.length; i++) {
+                  var item = resp.items[i];
+                  while (new Date(item.start.dateTime).getDay() != start.getDay()) {
+                    hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+                    start.setDate(start.getDate() + 1);
+                    dayHours = 0;
+                    if (start.getDay() === 4) {
+                      hoursString += "Total for week: " + weekHours + "<br>";
+                      weekHours = 0;
                     }
-                    var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
-                    dayHours += tempHours;
-                    weekHours += tempHours;
-                    totalHours += tempHours;
-                    events += resp.items[i].summary + " hours: " + tempHours + "<br>";
                   }
-                  hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
-                  hoursString += "Total for week: " + weekHours + "<br>";
-                  document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
+                  var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
+                  dayHours += tempHours;
+                  weekHours += tempHours;
+                  totalHours += tempHours;
+                  events += resp.items[i].summary + " hours: " + tempHours + "<br>";
+                }
+                hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+                hoursString += "Total for week: " + weekHours + "<br>";
+                document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
               });
             }
           });
