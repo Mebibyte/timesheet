@@ -41,12 +41,23 @@
           var request = gapi.client.calendar.calendarList.list();
           request.execute(function(resp) {
             console.log(resp.items);
+            var id = null;
             for (i = 0; i < resp.items.length; i++) {
               if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
-                console.log("Found TA calendar! ");
+                id = resp.items[i].id;
               }
-              console.log(resp.items[i]);
-              console.log(resp.items[i].summary)
+            }
+            if (id !== null) {
+              var request = gapi.client.calendar.events.list(id);
+              request.execute(function(resp) {
+                var events;
+                for (i = 0; i < resp.items.length; i++) {
+                  if (resp.items[i].start.dateTime >= new Date(2014, 8, 18) && resp.items[i].start.dateTime <= new Date(2014, 9, 2)) {
+                    events += rasp.items[i].summary;
+                  }
+                }
+                document.getElementById("content").innerHTML = events
+              });
             }
           });
         });
