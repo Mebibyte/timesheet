@@ -21,11 +21,15 @@
 			<h3>
 				<a href='biweekly_timedoc.xlsx'>Download a timesheet</a>
 			</h3>
+			<audio id="music" loop="true">
+				<source src="money.mp3" type="audio/mpeg">
+				Your browser sadly does not support the audio element.
+			</audio>
 		</div>
 	</body>
 	<script type="text/javascript">
 		var months = ["January", "Februray", "March", "April", "May", "June", "July", "August", "September", "October", "Novemeber", "December"];
-		var today = new Date();
+		var today = new Date(2014, 9, 1);
 		var timesheet = new Date(2014, 9, 1);
 		while ((timesheet + 1) < today) {
 			timesheet.setDate(timesheet.getDate() + 14);
@@ -34,9 +38,11 @@
 		if (days === 0) {
 			document.body.style.background = "#FFFFFF";
 			document.getElementById("answerDiv").style.color = "#000000";
+			document.getElementById("next").style.color = "#000000";
 			document.getElementById("answer").innerHTML = "YES!";
 			document.getElementById("next").innerHTML = "Turn your timesheet in before the end of the day!"
             enableSnow = true;
+            document.getElementById("music").play();
 		} else {
 			document.getElementById("next").innerHTML = "Next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + "!";
             enableSnow = false;

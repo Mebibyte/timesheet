@@ -1,5 +1,5 @@
 var snowsrc="money.png"
-var no = 15;
+var no = 20;
 var hidesnowtime = 0;
 var snowdistance = "pageheight";
 
