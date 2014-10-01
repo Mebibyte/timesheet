@@ -33,46 +33,46 @@ sty = new Array();
 if (enableSnow) {
   for (i = 0; i < no; ++ i) {  
     dx[i] = 0;                        // set coordinate variables
-    xp[i] = Math.random()*(doc_width-50);  // set position variables
-    yp[i] = Math.random()*doc_height;
-    am[i] = Math.random()*20;         // set amplitude variables
-    stx[i] = 0.02 + Math.random()/10; // set step variables
+    xp[i] = Math.random() * (doc_width - 50);  // set position variables
+    yp[i] = Math.random() * doc_height;
+    am[i] = Math.random() * 20;         // set amplitude variables
+    stx[i] = 0.02 + Math.random() / 10; // set step variables
     sty[i] = 0.7 + Math.random();     // set step variables
     if (ie4up||ns6up) {
-      document.write("<div id=\"dot"+ i +"\" style=\"POSITION: absolute; Z-INDEX: "+ i +"; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src='"+snowsrc+"' border=\"0\"><\/div>");
+      document.write("<div id=\"dot" + i + "\" style=\"POSITION: absolute; Z-INDEX: " + i + "; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src='" + snowsrc + "' border=\"0\"><\/div>");
     }
   }
 }
 
 function snowIE_NS6() {  // IE and NS6 main animation function
-  doc_width = ns6up ? window.innerWidth-10 : iecompattest().clientWidth - 10;
+  doc_width = ns6up ? window.innerWidth - 10 : iecompattest().clientWidth - 10;
       doc_height = (window.innerHeight && snowdistance == "windowheight") ? window.innerHeight : 
       (ie4up && snowdistance == "windowheight") ?  iecompattest().clientHeight : 
       (ie4up && !window.opera && snowdistance == "pageheight") ? iecompattest().scrollHeight : 
       iecompattest().offsetHeight;
   for (i = 0; i < no; ++ i) {  // iterate for every dot
     yp[i] += sty[i];
-    if (yp[i] > doc_height-50) {
-      xp[i] = Math.random()*(doc_width-am[i]-30);
+    if (yp[i] > doc_height - 50) {
+      xp[i] = Math.random() * (doc_width - am[i] - 50);
       yp[i] = 0;
-      stx[i] = 0.02 + Math.random()/10;
+      stx[i] = 0.02 + Math.random() / 10;
       sty[i] = 0.7 + Math.random();
     }
     dx[i] += stx[i];
-    document.getElementById("dot"+i).style.top=yp[i]+"px";
-    document.getElementById("dot"+i).style.left=xp[i] + am[i]*Math.sin(dx[i])+"px";  
+    document.getElementById("dot" + i).style.top = yp[i] + "px";
+    document.getElementById("dot" + i).style.left = xp[i] + am[i] * Math.sin(dx[i]) + "px";  
   }
   snowtimer = setTimeout("snowIE_NS6()", 10);
 }
 
 function hidesnow(){
-    if (window.snowtimer) clearTimeout(snowtimer)
-    for (i=0; i<no; i++) document.getElementById("dot"+i).style.visibility="hidden"
+    if (window.snowtimer) clearTimeout(snowtimer);
+    for (i = 0; i < no; i++) document.getElementById("dot"+i).style.visibility="hidden";
 }
         
 
-if (enableSnow && (ie4up || ns6up)){
+if (enableSnow && (ie4up || ns6up)) {
   snowIE_NS6();
-  if (hidesnowtime>0)
-    setTimeout("hidesnow()", hidesnowtime*1000)
+  if (hidesnowtime > 0)
+    setTimeout("hidesnow()", hidesnowtime * 1000);
 }
