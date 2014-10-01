@@ -5,9 +5,9 @@
     <title>Automatic Timesheet Creator</title>
   </head>
   <body>
-    <button id="authorize-button" style="visibility: hidden">Authorize</button>
+    <div id="authorize" style="visibility: hidden">Click to give access to view calendars: <button onclick="handleAuthClick()">Authorize</button></div>
     <div id="selectCalendar" style="visibility: hidden">
-      Select Calendar:
+      Select Calendar with TA hours:
       <select></select>
       <input type="submit" value="Select" onclick="handleSelectClick()">
     </div>
@@ -25,13 +25,12 @@
 
 
       function handleAuthResult(authResult) {
-        var authorizeButton = document.getElementById('authorize-button');
+        var authorizeDiv = document.getElementById('authorize');
         if (authResult && !authResult.error) {
-          authorizeButton.style.visibility = 'hidden';
+          authorizeDiv.style.visibility = 'hidden';
           makeApiCall();
         } else {
-          authorizeButton.style.visibility = '';
-          authorizeButton.onclick = handleAuthClick;
+          authorizeDiv.style.visibility = '';
         }
       }
 
@@ -41,16 +40,50 @@
       }
 
       function handleSelectClick(event) {
-        if (document.getElementById("selectDiv").getElementsByTagName("select")[0].selectedValue >= 0) {
+        if (document.getElementById("selectCalendar").getElementsByTagName("select")[0].selectedIndex >= 0) {
+          var today = new Date();
+          var timesheet = new Date(2014, 9, 1);
+          while ((timesheet + 1) < today) {
+            timesheet.setDate(timesheet.getDate() + 14);
+          }
+          var start = new Date(timesheet);
+          start.setDate(start.getDate() - 13);
+          timesheet.setDate(timesheet.getDate() + 1);
           gapi.client.load('calendar', 'v3', function() {
             gapi.client.calendar.events.list({
-                  'calendarId': id,
+                  'calendarId': document.getElementById("selectCalendar").getElementsByTagName("select")[0].value,
                   'timeMin': start.toISOString(),
                   'timeMax': timesheet.toISOString(),
                   'singleEvents': true,
                   'orderBy': "startTime"
             }).execute(function(resp) {
               console.log(resp);
+              var hoursString = "";
+              var dayHours = 0;
+              var weekHours = 0;
+              var totalHours = 0;
+              var events = "";
+              var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+              for (i = 0; i < resp.items.length; i++) {
+                var item = resp.items[i];
+                while (new Date(item.start.dateTime).getDay() != start.getDay()) {
+                  hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+                  start.setDate(start.getDate() + 1);
+                  dayHours = 0;
+                  if (start.getDay() === 4) {
+                    hoursString += "Total for week: " + weekHours + "<br>";
+                    weekHours = 0;
+                  }
+                }
+                var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
+                dayHours += tempHours;
+                weekHours += tempHours;
+                totalHours += tempHours;
+                events += resp.items[i].summary + " hours: " + tempHours + "<br>";
+              }
+              hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+              hoursString += "Total for week: " + weekHours + "<br>";
+              document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
             });
           });
         }
@@ -58,15 +91,6 @@
 
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
-        var today = new Date();
-        var timesheet = new Date(2014, 9, 1);
-        while ((timesheet + 1) < today) {
-          timesheet.setDate(timesheet.getDate() + 14);
-        }
-        var start = new Date(timesheet);
-        start.setDate(start.getDate() - 13);
-        timesheet.setDate(timesheet.getDate() + 1);
-
         gapi.client.load('calendar', 'v3', function() {
           var request = gapi.client.calendar.calendarList.list();
           request.execute(function(resp) {
@@ -81,43 +105,6 @@
               select.add(option);
             }
             selectDiv.style.visibility = '';
-            if (id !== null) {
-              gapi.client.calendar.events.list({
-                'calendarId': id,
-                'timeMin': start.toISOString(),
-                'timeMax': timesheet.toISOString(),
-                'singleEvents': true,
-                'orderBy': "startTime"
-              }).execute(function(resp) {
-                console.log(resp);
-                var hoursString = "";
-                var dayHours = 0;
-                var weekHours = 0;
-                var totalHours = 0;
-                var events = "";
-                var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                for (i = 0; i < resp.items.length; i++) {
-                  var item = resp.items[i];
-                  while (new Date(item.start.dateTime).getDay() != start.getDay()) {
-                    hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
-                    start.setDate(start.getDate() + 1);
-                    dayHours = 0;
-                    if (start.getDay() === 4) {
-                      hoursString += "Total for week: " + weekHours + "<br>";
-                      weekHours = 0;
-                    }
-                  }
-                  var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
-                  dayHours += tempHours;
-                  weekHours += tempHours;
-                  totalHours += tempHours;
-                  events += resp.items[i].summary + " hours: " + tempHours + "<br>";
-                }
-                hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
-                hoursString += "Total for week: " + weekHours + "<br>";
-                document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
-              });
-            }
           });
         });
       }
