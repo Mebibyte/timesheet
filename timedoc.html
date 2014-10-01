@@ -9,7 +9,7 @@
     <div id="selectCalendar" style="visibility: hidden">
       Select Calendar:
       <select></select>
-      <input type="submit" value="Select">
+      <input type="submit" value="Select" onclick="handleSelectClick()">
     </div>
     <script type="text/javascript">
       var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
@@ -41,17 +41,18 @@
       }
 
       function handleSelectClick(event) {
-        gapi.client.load('calendar', 'v3', function() {
-          var request = gapi.client.calendar.calendarList.list();
-          request.execute(function(resp) {
-            console.log(resp);
-            var id = null;
-            for (i = 0; i < resp.items.length; i++) {
-              if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
-                id = resp.items[i].id;
-              }
-            }
-          }
+        if (document.getElementById("selectDiv").getElementsByTagName("select")[0].selectedValue >= 0) {
+          gapi.client.load('calendar', 'v3', function() {
+            gapi.client.calendar.events.list({
+                  'calendarId': id,
+                  'timeMin': start.toISOString(),
+                  'timeMax': timesheet.toISOString(),
+                  'singleEvents': true,
+                  'orderBy': "startTime"
+            }).execute(function(resp) {
+              console.log(resp);
+            });
+          });
         }
       }
 
