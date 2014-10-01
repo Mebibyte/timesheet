@@ -76,11 +76,11 @@
             var select = selectDiv.getElementsByTagName("select")[0];
             for (i = 0; i < resp.items.length; i++) {
               var option = document.createElement("option");
-              option.text = resp.items[i].name;
+              option.text = resp.items[i].summary;
               option.value = resp.items[i].id;
               select.add(option);
             }
-            selectDiv.style.visibility = "block";
+            selectDiv.style.visibility = '';
             if (id !== null) {
               gapi.client.calendar.events.list({
                 'calendarId': id,
