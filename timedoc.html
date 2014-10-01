@@ -6,6 +6,11 @@
   </head>
   <body>
     <button id="authorize-button" style="visibility: hidden">Authorize</button>
+    <div id="selectCalendar" style="visibility: hidden">
+      Select Calendar:
+      <select></select>
+      <input type="submit" value="Select">
+    </div>
     <script type="text/javascript">
       var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
       var scopes = 'https://www.googleapis.com/auth/calendar.readonly';
@@ -35,6 +40,21 @@
         return false;
       }
 
+      function handleSelectClick(event) {
+        gapi.client.load('calendar', 'v3', function() {
+          var request = gapi.client.calendar.calendarList.list();
+          request.execute(function(resp) {
+            console.log(resp);
+            var id = null;
+            for (i = 0; i < resp.items.length; i++) {
+              if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
+                id = resp.items[i].id;
+              }
+            }
+          }
+        }
+      }
+
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
         var today = new Date();
@@ -51,11 +71,15 @@
           request.execute(function(resp) {
             console.log(resp);
             var id = null;
+            var selectDiv = document.getElementById("selectCalendar");
+            var select = selectDiv.getElementsByTagName("select")[0];
             for (i = 0; i < resp.items.length; i++) {
-              if (~resp.items[i].summary.toLowerCase().indexOf("ta")) {
-                id = resp.items[i].id;
-              }
+              var option = document.createElement("option");
+              option.text = resp.items[i].name;
+              option.value = resp.items[i].id;
+              select.add(option);
             }
+            selectDiv.style.visibility = "block";
             if (id !== null) {
               gapi.client.calendar.events.list({
                 'calendarId': id,
