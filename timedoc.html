@@ -43,8 +43,10 @@
         if (document.getElementById("selectCalendar").getElementsByTagName("select")[0].selectedIndex >= 0) {
           var today = new Date();
           var timesheet = new Date(2014, 9, 1);
-          while ((timesheet + 1) < today) {
+          var timesheet1 = new Date(2014, 9, 2);
+          while (timesheet1 < today) {
             timesheet.setDate(timesheet.getDate() + 14);
+            timesheet1.setDate(timesheet1.getDate() + 14);
           }
           var start = new Date(timesheet);
           start.setDate(start.getDate() - 13);
