@@ -102,63 +102,33 @@
       }
     }
 
-    function handleUploadClick() {
-      var xhr;
-      if (window.XMLHttpRequest) {
-          xhr = new XMLHttpRequest();
-      } else if (window.ActiveXObject) {
-          xhr = new ActiveXObject("Microsoft.XMLHTTP");
-      }
-      xhr.onreadystatechange = function(){uploadFile};
-      xhr.open("GET","biweekly_timedoc.xlsx"); //assuming kgr.bss is plaintext
-      xhr.send();
-      function uploadFile() {
-        if (xhr.readyState == 4) {
-          if (xhr.status == 200) {
-            gapi.client.load('drive', 'v3', function() {
-              const boundary = '-------314159265358979323846';
-              const delimiter = "\r\n--" + boundary + "\r\n";
-              const close_delim = "\r\n--" + boundary + "--";
+    function fileLoaded(file) {
+      gapi.client.load('drive', 'v2', function() {
+        var mydata = {};
+        mydata.title = "biweekly_test.xlsx";
+        mydata.mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        mydata.description = "We are using insert to create a new file, but only the metadata.";
 
-              var reader = new FileReader();
-              reader.readAsBinaryString(xhr.responseText);
-              reader.onload = function(e) {
-                var contentType = fileData.type || 'application/octet-stream';
-                var metadata = {
-                  'title': fileData.fileName,
-                  'mimeType': contentType
-                };
-              };
-              var base64Data = btoa(reader.result);
-              var multipartRequestBody =
-                delimiter +
-                'Content-Type: application/json\r\n\r\n' +
-                JSON.stringify(metadata) +
-                delimiter +
-                'Content-Type: ' + contentType + '\r\n' +
-                'Content-Transfer-Encoding: base64\r\n' +
-                '\r\n' +
-                base64Data +
-                close_delim;
-              var request = gapi.client.request({
-                'path': '/upload/drive/v3/files',
-                'method': 'POST',
-                'params': {'uploadType': 'multipart'},
-                'headers': {
-                  'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
-                },
-                'body': multipartRequestBody
-              });
-              if (!callback) {
-                callback = function(file) {
-                  console.log(file)
-                };
-              }
-              request.execute(callback);
-            });
-          }
+        var request = gapi.client.drive.files.insert(file, {'resource': mydata} );
+
+        request.execute(function(resp) { console.log(resp); });
+      });
+    }
+
+    function handleUploadClick() {
+      var xmlhttp;
+      if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+      } else { // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          fileLoaded(xmlhttp.responseText);
         }
       }
+      xmlhttp.open("GET", "biweekly_timedoc.xlsx", true);
+      xmlhttp.send();
     }
 
     // Load the API and make an API call.  Display the results on the screen.
