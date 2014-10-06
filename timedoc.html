@@ -103,16 +103,102 @@
     }
 
     function fileLoaded(file) {
+      console.log(file);
       gapi.client.load('drive', 'v2', function() {
         var mydata = {};
         mydata.title = "biweekly_test.xlsx";
         mydata.mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         mydata.description = "We are using insert to create a new file, but only the metadata.";
 
-        var request = gapi.client.drive.files.insert(file, {'resource': mydata} );
+        var request = gapi.client.drive.files.insert(file, {'requestBody': mydata});
 
         request.execute(function(resp) { console.log(resp); });
       });
+    }
+
+    function getBinary(file){
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", file, false);
+      xhr.overrideMimeType("text/plain; charset=x-user-defined");
+      xhr.send(null);
+      return xhr.responseText;
+    }
+
+    function base64Encode(str) {
+      var CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+      var out = "", i = 0, len = str.length, c1, c2, c3;
+      while (i < len) {
+        c1 = str.charCodeAt(i++) & 0xff;
+        if (i == len) {
+          out += CHARS.charAt(c1 >> 2);
+          out += CHARS.charAt((c1 & 0x3) << 4);
+          out += "==";
+          break;
+        }
+        c2 = str.charCodeAt(i++);
+        if (i == len) {
+          out += CHARS.charAt(c1 >> 2);
+          out += CHARS.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+          out += CHARS.charAt((c2 & 0xF) << 2);
+          out += "=";
+          break;
+        }
+        c3 = str.charCodeAt(i++);
+        out += CHARS.charAt(c1 >> 2);
+        out += CHARS.charAt(((c1 & 0x3) << 4) | ((c2 & 0xF0) >> 4));
+        out += CHARS.charAt(((c2 & 0xF) << 2) | ((c3 & 0xC0) >> 6));
+        out += CHARS.charAt(c3 & 0x3F);
+      }
+      return out;
+    }
+
+    /**
+     * Insert new file.
+     *
+     * @param {File} fileData File object to read data from.
+     * @param {Function} callback Function to call when the request is complete.
+     */
+    function insertFile(fileData, callback) {
+      const boundary = '-------314159265358979323846';
+      const delimiter = "\r\n--" + boundary + "\r\n";
+      const close_delim = "\r\n--" + boundary + "--";
+
+      var reader = new FileReader();
+      reader.getBinary(fileData);
+      reader.onload = function(e) {
+        var contentType = fileData.type || 'application/octet-stream';
+        var metadata = {
+          'title': fileData.name,
+          'mimeType': contentType
+        };
+
+        var base64Data = base64Encode(reader.result);
+        var multipartRequestBody =
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            JSON.stringify(metadata) +
+            delimiter +
+            'Content-Type: ' + contentType + '\r\n' +
+            'Content-Transfer-Encoding: base64\r\n' +
+            '\r\n' +
+            base64Data +
+            close_delim;
+
+        var request = gapi.client.request({
+            'path': '/upload/drive/v2/files',
+            'method': 'POST',
+            'params': {'uploadType': 'multipart'},
+            'headers': {
+              'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+            },
+            'body': multipartRequestBody});
+        if (!callback) {
+          callback = function(file) {
+            console.log(file)
+          };
+        }
+        request.execute(callback);
+      }
     }
 
     function handleUploadClick() {
@@ -124,7 +210,7 @@
       }
       xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-          fileLoaded(xmlhttp.responseText);
+          insertFile(xmlhttp.responseText);
         }
       }
       xmlhttp.open("GET", "biweekly_timedoc.xlsx", true);
