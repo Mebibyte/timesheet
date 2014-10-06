@@ -103,22 +103,62 @@
     }
 
     function handleUploadClick() {
-      gapi.client.load('drive', 'v3', function() {
-        var xhr;
-        if (window.XMLHttpRequest) {
-            xhr = new XMLHttpRequest();
-        } else if (window.ActiveXObject) {
-            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+      var xhr;
+      if (window.XMLHttpRequest) {
+          xhr = new XMLHttpRequest();
+      } else if (window.ActiveXObject) {
+          xhr = new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      xhr.onreadystatechange = function(){uploadFile};
+      xhr.open("GET","biweekly_timedoc.xlsx"); //assuming kgr.bss is plaintext
+      xhr.send();
+      function uploadFile() {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            gapi.client.load('drive', 'v3', function() {
+              const boundary = '-------314159265358979323846';
+              const delimiter = "\r\n--" + boundary + "\r\n";
+              const close_delim = "\r\n--" + boundary + "--";
+              
+              var reader = new FileReader();
+              reader.readAsBinaryString(xhr.responseText);
+              reader.onload = function(e) {
+                var contentType = fileData.type || 'application/octet-stream';
+                var metadata = {
+                  'title': fileData.fileName,
+                  'mimeType': contentType
+                };
+              };
+              var base64Data = btoa(reader.result);
+              var multipartRequestBody =
+                delimiter +
+                'Content-Type: application/json\r\n\r\n' +
+                JSON.stringify(metadata) +
+                delimiter +
+                'Content-Type: ' + contentType + '\r\n' +
+                'Content-Transfer-Encoding: base64\r\n' +
+                '\r\n' +
+                base64Data +
+                close_delim;
+              var request = gapi.client.request({
+                'path': '/upload/drive/v3/files',
+                'method': 'POST',
+                'params': {'uploadType': 'multipart'},
+                'headers': {
+                  'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+                },
+                'body': multipartRequestBody});
+              });
+              if (!callback) {
+                callback = function(file) {
+                  console.log(file)
+                };
+              }
+              request.execute(callback);
+            });
+          }
         }
-        xhr.onreadystatechange = function(){alert(xhr.responseText);};
-        xhr.open("GET","biweekly_timedoc.xlsx"); //assuming kgr.bss is plaintext
-        xhr.send();
-        var request = gapi.client.request({
-          'path': 'upload/drive/v3/files',
-          'method': 'POST',
-          'params': {'uploadType': 'media'},
-        });
-      });
+      }
     }
 
     // Load the API and make an API call.  Display the results on the screen.
