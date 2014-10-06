@@ -9,116 +9,138 @@
     <div id="header">
       <p>Retrieves your hours using the Google Calendar API. Requires a separate calendar which contains your hours as events.</p>
     </div>
+    <div id="selectCalendar" style="visibility: hidden">
+      Select Calendar with TA hours:
+      <select></select>
+      <input type="submit" value="Select" onclick="handleSelectClick()">
+    </div>
+    <div id='upload' style="visibility: hidden">
+      Upload to Google Drive: <input type="submit" value="upload" onClick="handleUploadClick()">
+    </div>
     <div id="content"></div>
-    <div id="authorize" style="visibility: hidden">Click to give access to view calendars: <button onclick="handleAuthClick()">Authorize</button></div>
-      <div id="selectCalendar" style="visibility: hidden">
-        Select Calendar with TA hours:
-        <select></select>
-        <input type="submit" value="Select" onclick="handleSelectClick()">
-      </div>
-      <div>
+    <div id="authorize" style="visibility: hidden">Click to give access to view calendars and Google Drive: <button onclick="handleAuthClick()">Authorize</button></div>
     </body>
-    <script type="text/javascript">
-      var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
-      var scopes = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/drive';
+  <script type="text/javascript">
+    var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
+    var scopes = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/drive';
 
-      // Authentication
-      function handleClientLoad() {
-        window.setTimeout(checkAuth,1);
+    // Authentication
+    function handleClientLoad() {
+      window.setTimeout(checkAuth,1);
+    }
+
+    function checkAuth() {
+      gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+    }
+
+    function handleAuthResult(authResult) {
+      var authorizeDiv = document.getElementById('authorize');
+      if (authResult && !authResult.error) {
+        authorizeDiv.style.visibility = 'hidden';
+        makeApiCall();
+      } else {
+        authorizeDiv.style.visibility = '';
       }
+    }
 
-      function checkAuth() {
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
-      }
+    function handleAuthClick(event) {
+      gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+      return false;
+    }
+    // END Authentication
 
-      function handleAuthResult(authResult) {
-        var authorizeDiv = document.getElementById('authorize');
-        if (authResult && !authResult.error) {
-          authorizeDiv.style.visibility = 'hidden';
-          makeApiCall();
-        } else {
-          authorizeDiv.style.visibility = '';
+    function handleSelectClick(event) {
+      if (document.getElementById("selectCalendar").getElementsByTagName("select")[0].selectedIndex >= 0) {
+        var today = new Date();
+        var timesheet = new Date(2014, 9, 1);
+        var timesheet1 = new Date(2014, 9, 2);
+        while (timesheet1 < today) {
+          timesheet.setDate(timesheet.getDate() + 14);
+          timesheet1.setDate(timesheet1.getDate() + 14);
         }
-      }
-
-      function handleAuthClick(event) {
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-        return false;
-      }
-      // END Authentication
-
-      function handleSelectClick(event) {
-        if (document.getElementById("selectCalendar").getElementsByTagName("select")[0].selectedIndex >= 0) {
-          var today = new Date();
-          var timesheet = new Date(2014, 9, 1);
-          var timesheet1 = new Date(2014, 9, 2);
-          while (timesheet1 < today) {
-            timesheet.setDate(timesheet.getDate() + 14);
-            timesheet1.setDate(timesheet1.getDate() + 14);
-          }
-          var start = new Date(timesheet);
-          start.setDate(start.getDate() - 13);
-          timesheet.setDate(timesheet.getDate() + 1);
-          gapi.client.load('calendar', 'v3', function() {
-            gapi.client.calendar.events.list({
-                  'calendarId': document.getElementById("selectCalendar").getElementsByTagName("select")[0].value,
-                  'timeMin': start.toISOString(),
-                  'timeMax': timesheet.toISOString(),
-                  'singleEvents': true,
-                  'orderBy': "startTime"
-            }).execute(function(resp) {
-              console.log(resp);
-              var hoursString = '<div class="column">';
-              var dayHours = 0;
-              var weekHours = 0;
-              var totalHours = 0;
-              var events = "";
-              var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-              for (i = 0; i < resp.items.length; i++) {
-                var item = resp.items[i];
-                while (new Date(item.start.dateTime).getDay() != start.getDay()) {
-                  hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
-                  start.setDate(start.getDate() + 1);
-                  dayHours = 0;
-                  if (start.getDay() === 4) {
-                    hoursString += "Total for week: " + weekHours + '</div><div class="column">';
-                    weekHours = 0;
-                  }
-                }
-                var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
-                dayHours += tempHours;
-                weekHours += tempHours;
-                totalHours += tempHours;
-                events += resp.items[i].summary + " hours: " + tempHours + "<br>";
-              }
-              hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
-              hoursString += "Total for week: " + weekHours + "<br></div>";
-              document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br><div style='clear: both'>Calendar Events:<br>" + events + '</div>';
-              document.getElementById("")
-            });
-          });
-        }
-      }
-
-      // Load the API and make an API call.  Display the results on the screen.
-      function makeApiCall() {
+        var start = new Date(timesheet);
+        start.setDate(start.getDate() - 13);
+        timesheet.setDate(timesheet.getDate() + 1);
         gapi.client.load('calendar', 'v3', function() {
-          var request = gapi.client.calendar.calendarList.list();
-          request.execute(function(resp) {
+          gapi.client.calendar.events.list({
+                'calendarId': document.getElementById("selectCalendar").getElementsByTagName("select")[0].value,
+                'timeMin': start.toISOString(),
+                'timeMax': timesheet.toISOString(),
+                'singleEvents': true,
+                'orderBy': "startTime"
+          }).execute(function(resp) {
             console.log(resp);
-            var id = null;
-            var selectDiv = document.getElementById("selectCalendar");
-            var select = selectDiv.getElementsByTagName("select")[0];
+            var hoursString = '<div class="column">';
+            var dayHours = 0;
+            var weekHours = 0;
+            var totalHours = 0;
+            var events = "";
+            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             for (i = 0; i < resp.items.length; i++) {
-              var option = document.createElement("option");
-              option.text = resp.items[i].summary;
-              option.value = resp.items[i].id;
-              select.add(option);
+              var item = resp.items[i];
+              while (new Date(item.start.dateTime).getDay() != start.getDay()) {
+                hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+                start.setDate(start.getDate() + 1);
+                dayHours = 0;
+                if (start.getDay() === 4) {
+                  hoursString += "Total for week: " + weekHours + '</div><div class="column">';
+                  weekHours = 0;
+                }
+              }
+              var tempHours = ((new Date(item.end.dateTime) - new Date(item.start.dateTime)) / 3600000);
+              dayHours += tempHours;
+              weekHours += tempHours;
+              totalHours += tempHours;
+              events += resp.items[i].summary + " hours: " + tempHours + "<br>";
             }
-            selectDiv.style.visibility = '';
+            hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+            hoursString += "Total for week: " + weekHours + "<br></div>";
+            document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<div style='clear: both'><br><br>Calendar Events:<br>" + events + '</div>';
+            document.getElementById("upload").style = "visibility: block";
           });
         });
       }
-    </script>
-    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    }
+
+    function handleUploadClick() {
+      gapi.client.load('drive', 'v3', function() {
+        var xhr;
+        if (window.XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xhr.onreadystatechange = function(){alert(xhr.responseText);};
+        xhr.open("GET","biweekly_timedoc.xlsx"); //assuming kgr.bss is plaintext
+        xhr.send();
+        var request = gapi.client.request({
+          'path': 'upload/drive/v3/files',
+          'method': 'POST',
+          'params': {'uploadType': 'media'},
+        })
+      }
+
+    }
+
+    // Load the API and make an API call.  Display the results on the screen.
+    function makeApiCall() {
+      gapi.client.load('calendar', 'v3', function() {
+        var request = gapi.client.calendar.calendarList.list();
+        request.execute(function(resp) {
+          console.log(resp);
+          var id = null;
+          var selectDiv = document.getElementById("selectCalendar");
+          var select = selectDiv.getElementsByTagName("select")[0];
+          for (i = 0; i < resp.items.length; i++) {
+            var option = document.createElement("option");
+            option.text = resp.items[i].summary;
+            option.value = resp.items[i].id;
+            select.add(option);
+          }
+          selectDiv.style.visibility = '';
+        });
+      });
+    }
+  </script>
+  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 </html>
