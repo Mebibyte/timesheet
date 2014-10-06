@@ -3,6 +3,7 @@
   <head>
     <meta charset='utf-8' />
     <title>Automatic Timesheet Creator</title>
+    <link rel="stylesheet" type="text/css" href="timedoc.css">
   </head>
   <body>
     <div id="header">
@@ -10,17 +11,18 @@
     </div>
     <div id="content"></div>
     <div id="authorize" style="visibility: hidden">Click to give access to view calendars: <button onclick="handleAuthClick()">Authorize</button></div>
-        <div id="selectCalendar" style="visibility: hidden">
-          Select Calendar with TA hours:
-          <select></select>
-          <input type="submit" value="Select" onclick="handleSelectClick()">
-        </div>
-        <div>
+      <div id="selectCalendar" style="visibility: hidden">
+        Select Calendar with TA hours:
+        <select></select>
+        <input type="submit" value="Select" onclick="handleSelectClick()">
+      </div>
+      <div>
     </body>
     <script type="text/javascript">
       var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
       var scopes = 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/drive';
 
+      // Authentication
       function handleClientLoad() {
         window.setTimeout(checkAuth,1);
       }
@@ -28,7 +30,6 @@
       function checkAuth() {
         gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
       }
-
 
       function handleAuthResult(authResult) {
         var authorizeDiv = document.getElementById('authorize');
@@ -44,6 +45,7 @@
         gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
         return false;
       }
+      // END Authentication
 
       function handleSelectClick(event) {
         if (document.getElementById("selectCalendar").getElementsByTagName("select")[0].selectedIndex >= 0) {
@@ -66,7 +68,7 @@
                   'orderBy': "startTime"
             }).execute(function(resp) {
               console.log(resp);
-              var hoursString = "";
+              var hoursString = '<div class="column">';
               var dayHours = 0;
               var weekHours = 0;
               var totalHours = 0;
@@ -79,7 +81,7 @@
                   start.setDate(start.getDate() + 1);
                   dayHours = 0;
                   if (start.getDay() === 4) {
-                    hoursString += "Total for week: " + weekHours + "<br>";
+                    hoursString += "Total for week: " + weekHours + '</div><div class="column">';
                     weekHours = 0;
                   }
                 }
@@ -89,7 +91,7 @@
                 totalHours += tempHours;
                 events += resp.items[i].summary + " hours: " + tempHours + "<br>";
               }
-              hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+              hoursString += days[start.getDay()] + ": " + dayHours + "<br></div>";
               hoursString += "Total for week: " + weekHours + "<br>";
               document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
               document.getElementById("")
