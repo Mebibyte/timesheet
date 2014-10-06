@@ -91,9 +91,9 @@
                 totalHours += tempHours;
                 events += resp.items[i].summary + " hours: " + tempHours + "<br>";
               }
-              hoursString += days[start.getDay()] + ": " + dayHours + "<br></div>";
-              hoursString += "Total for week: " + weekHours + "<br>";
-              document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events;
+              hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
+              hoursString += "Total for week: " + weekHours + "<br></div>";
+              document.getElementById("content").innerHTML = "<div style='clear: both'>Hours for Timesheet:<br>" + hoursString + "<br><br>Calendar Events:<br>" + events + '</div>';
               document.getElementById("")
             });
           });
