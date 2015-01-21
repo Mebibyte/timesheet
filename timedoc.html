@@ -96,6 +96,9 @@
             //document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString;
             document.getElementById("sheet").contentWindow.fillIn("Hollingsworth, William G", "January 21, 2015", 8, 14, 15, 21, "blah");
             document.getElementById("sheet").style.visibility = "visible";
+            var frame = document.getElementById("sheet").contentWindow;
+            frame.focus();
+            frame.print();
           });
         });
       }
