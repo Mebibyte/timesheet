@@ -93,8 +93,7 @@
             hoursString += "Total for week: " + weekHours + "<br></div>";
             document.getElementById("selectCalendar").style.visibility = "hidden";
             document.getElementById("header").style.visibility = "hidden";
-            //document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString;
-            document.getElementById("sheet").contentWindow.fillIn("Hollingsworth, William G", "January 21, 2015", 8, 14, 15, 21, "blah");
+            document.getElementById("sheet").contentWindow.fillIn("Hollingsworth, William G", start.getMonth() + " " + start.getDate() + ", " + start.getFullYear(), start.getDay() - 13 + "/" + start.getFullYear, start.getDay() - 7 + "/" + start.getFullYear, (start.getDay() - 6) + "/" + start.getFullYear, start.getDay() + "/" + start.getFullYear, "blah");
             document.getElementById("sheet").style.visibility = "visible";
             var frame = document.getElementById("sheet").contentWindow;
             frame.focus();
