@@ -14,8 +14,9 @@
       <select></select>
       <input type="submit" value="Select" onclick="handleSelectClick()">
     </div>
-    <div id="content"></div>
     <div id="authorize" style="visibility: hidden">Click to give access to view calendars: <button onclick="handleAuthClick()">Authorize</button></div>
+    <div id="content"></div>
+    <iframe id="sheet" src="sheet001.htm"></iframe>
     </body>
   <script type="text/javascript">
     var clientId = '704585586654-nn6d4t5a9le7g96mi7be2nirdf25ehf2.apps.googleusercontent.com';
@@ -91,7 +92,8 @@
             hoursString += days[start.getDay()] + ": " + dayHours + "<br>";
             hoursString += "Total for week: " + weekHours + "<br></div>";
             document.getElementById("content").innerHTML = "Hours for Timesheet:<br>" + hoursString;
-            document.getElementById("upload").style.visibility = "";
+            document.getElementById("upload").style.visibility = "none";
+            document.getElementById("sheet").style.visibility = "visible";
           });
         });
       }
