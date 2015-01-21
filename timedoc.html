@@ -93,7 +93,7 @@
             hoursString += "Total for week: " + weekHours + "<br></div>";
             document.getElementById("selectCalendar").style.visibility = "hidden";
             document.getElementById("header").style.visibility = "hidden";
-            document.getElementById("sheet").contentWindow.fillIn("Hollingsworth, William G", start.toLocaleFormat("%B %d, %y", start.getDay() - 13 + "/" + start.getFullYear(), start.getDay() - 7 + "/" + start.getFullYear(), (start.getDay() - 6) + "/" + start.getFullYear(), start.getDay() + "/" + start.getFullYear(), "blah");
+            document.getElementById("sheet").contentWindow.fillIn("Hollingsworth, William G", start.toLocaleFormat("%B %d, %y"), start.getDay() - 13 + "/" + start.getFullYear(), start.getDay() - 7 + "/" + start.getFullYear(), (start.getDay() - 6) + "/" + start.getFullYear(), start.getDay() + "/" + start.getFullYear(), "blah");
             document.getElementById("sheet").style.visibility = "visible";
             var frame = document.getElementById("sheet").contentWindow;
             frame.focus();
