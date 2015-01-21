@@ -11,8 +11,10 @@
     </div>
     <div id="selectCalendar" style="visibility: hidden">
       Select Calendar with TA hours:
-      <select></select>
-      <input type="submit" value="Select" onclick="handleSelectClick()">
+      <select></select><br>
+      Enter name (Last, First Middle Initial):
+      <input type="text" id="username" name="username"><br>
+      <input type="submit" value="Submit" onclick="handleSelectClick()">
     </div>
     <div id="authorize" style="visibility: hidden">Click to give access to view calendars: <button onclick="handleAuthClick()">Authorize</button></div>
     <div id="content"></div>
@@ -94,7 +96,7 @@
             var day2 = temp.format("j/y");
             temp.setDate(temp.getDate() - 6);
             var day1 = temp.format("j/y");
-            frame.fillIn("Hollingsworth, William G", date, day1, day2, day3, day4, "blah");
+            frame.fillIn(document.getElementById("username").value, date, day1, day2, day3, day4, hours);
             console.log(hours);
             frame.focus();
             frame.print();
