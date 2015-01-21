@@ -98,7 +98,15 @@
             var frame = document.getElementById("sheet").contentWindow;
             document.getElementById("sheet").style.visibility = "visible";
             var date = start.format("F j, Y");
-            frame.fillIn("Hollingsworth, William G", date, (start.getDay() - 13) + "/" + start.getFullYear(), (start.getDay() - 7) + "/" + start.getFullYear(), (start.getDay() - 6) + "/" + start.getFullYear(), start.getDay() + "/" + start.getFullYear(), "blah");
+            var day4 = start.format("j/y");
+            var temp = new Date();
+            temp.setDate(start.getDate() - 6);
+            var day3 = temp.format("j/y");
+            temp.setDate(temp.getDate() - 1);
+            var day2 = temp.format("j/y");
+            temp.setDate(temp.getDate() - 6);
+            var day1 = temp.format("j/y");
+            frame.fillIn("Hollingsworth, William G", date, day1, day2, day3, day4, "blah");
             frame.focus();
             frame.print();
           });
