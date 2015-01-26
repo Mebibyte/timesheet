@@ -115,11 +115,13 @@
             document.getElementById("header").style.visibility = "hidden";
             var frame = document.getElementById("sheet").contentWindow;
             document.getElementById("sheet").style.visibility = "visible";
-            timesheet1.adjustDate(-1);
-            var date = timesheet1.format("F j, Y");
-            var day4 = timesheet1.format("n/j");
+
             var temp = new Date();
-            temp.adjustDate(-6);
+            temp.setDate(timesheet1.getDate());
+            temp.adjustDate(-1);
+            var date = temp.format("F j, Y");
+            var day4 = temp.format("n/j");
+            temp.adjustDate(-6)
             var day3 = temp.format("n/j");
             temp.adjustDate(-1);
             var day2 = temp.format("n/j");
