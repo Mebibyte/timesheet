@@ -117,7 +117,7 @@
             document.getElementById("sheet").style.visibility = "visible";
 
             var temp = new Date();
-            temp.setDate(timesheet1.getDate());
+            temp.setTime(timesheet1.getTime());
             temp.adjustDate(-1);
             var date = temp.format("F j, Y");
             var day4 = temp.format("n/j");
