@@ -1,4 +1,5 @@
-function fillIn(username, enddate, day1, day2, day3, day4, hours) {
+function fillIn(username, employeeID, enddate, day1, day2, day3, day4, hours) {
+    document.getElementById('employeeID').innerHTML = employeeID;
     document.getElementById('username').innerHTML = username;
     document.getElementById('enddate').innerHTML = enddate;
     document.getElementById('day1').innerHTML = day1;
