@@ -1,5 +1,5 @@
 var snowsrc="money.png"
-var no = 20;
+var no = 30;
 var hidesnowtime = 0;
 var snowdistance = "pageheight";
 
@@ -15,6 +15,7 @@ function iecompattest(){
 var dx, xp, yp;    // coordinate and position variables
 var am, stx, sty;  // amplitude and step variables
 var i, doc_width = 800, doc_height = 600; 
+var rotateDegrees = 0;
 
 if (ns6up) {
   doc_width = self.innerWidth;
@@ -39,7 +40,7 @@ if (enableSnow) {
     stx[i] = 0.02 + Math.random() / 10; // set step variables
     sty[i] = 0.7 + Math.random();     // set step variables
     if (ie4up||ns6up) {
-      document.write("<div id=\"dot" + i + "\" style=\"POSITION: absolute; Z-INDEX: " + i + "; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src='" + snowsrc + "' border=\"0\"><\/div>");
+      document.write("<div id=\"dot" + i + "\" class=\"money\" style=\"POSITION: absolute; Z-INDEX: " + i + "; VISIBILITY: visible; TOP: 15px; LEFT: 15px;\"><img src='" + snowsrc + "' border=\"0\"><\/div>");
     }
   }
 }
@@ -51,16 +52,24 @@ function snowIE_NS6() {  // IE and NS6 main animation function
       (ie4up && !window.opera && snowdistance == "pageheight") ? iecompattest().scrollHeight : 
       iecompattest().offsetHeight;
   for (i = 0; i < no; ++ i) {  // iterate for every dot
-    yp[i] += sty[i];
-    if (yp[i] > doc_height - 50) {
+    yp[i] += sty[i] * (((i % 20) + 2) / 7);
+    if (yp[i] > doc_height + 100) {
       xp[i] = Math.random() * (doc_width - am[i] - 50);
-      yp[i] = 0;
+      yp[i] = -100;
       stx[i] = 0.02 + Math.random() / 10;
       sty[i] = 0.7 + Math.random();
     }
     dx[i] += stx[i];
-    document.getElementById("dot" + i).style.top = yp[i] + "px";
-    document.getElementById("dot" + i).style.left = xp[i] + am[i] * Math.sin(dx[i]) + "px";  
+    var dot = document.getElementById("dot" + i);
+    rotateDegrees += 0.15;
+    rotateDegrees %= 3600;
+    var transformation = "translateZ(" + ((i % 20) * 100) + "px) translateY(" + yp[i] + "px) translateX(" + (xp[i] + am[i] * Math.sin(dx[i])) + "px) rotateX(" + (((i % 20) * 30) + rotateDegrees / 10) + "deg) rotateY(" + (((i % 20) * 30) + rotateDegrees / 5) + "deg) scale(" + (((i % 20)/15) + 0.5) + ", " + (((i % 20)/15) + 0.5) + ")";
+    dot.style.webkitTransform = transformation;
+    dot.style.MozTransform = transformation;
+    dot.style.msTransform = transformation;
+    dot.style.OTransform = transformation;
+    dot.style.transform = transformation;
+
   }
   snowtimer = setTimeout("snowIE_NS6()", 10);
 }
