@@ -59,7 +59,7 @@ function snowIE_NS6() {  // IE and NS6 main animation function
       stx[i] = 0.02 + Math.random() / 10;
       sty[i] = 0.7 + Math.random();
     }
-    dx[i] += stx[i];
+    dx[i] += stx[i] / 2;
     var dot = document.getElementById("dot" + i);
     rotateDegrees += 0.15;
     rotateDegrees %= 3600;

@@ -53,7 +53,7 @@
 		var hours = 24 - (((new Date().getHours()) + 1) % 24);
 		var minutes = (60 - ((new Date().getMinutes()) % 60)) - 1;
 		var seconds = (60 - ((new Date().getSeconds()) % 60)) - 1;
-		if (days !== 0) {
+		if (days == 0) {
 			document.getElementsByTagName("h1")[0].style.background = "rgba(255, 255, 255, 0.9)";
 			document.getElementsByTagName("h2")[0].style.background = "rgba(255, 255, 255, 0.9)";
 			document.getElementById("answerDiv").style.color = "#000000";
@@ -63,7 +63,7 @@
             enableSnow = true;
             document.getElementById("music").play();
 		} else {
-			document.getElementById("next").innerHTML = "The next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + ", " + hours + " hour" + (hours === 1 ? "" : "s") + ", " + minutes + " minute" + (minutes === 1 ? "" : "s") + " and " + seconds + " second" + (seconds === 1 ? "" : "s") + "!";
+			document.getElementById("next").innerHTML = "The next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + ", " + hours + " hour" + (hours === 1 ? "" : "s") + ", " + minutes + " minute" + (minutes === 1 ? "" : "s") + " and " + seconds + " second" + (seconds === 1 ? "" : "s");
             enableSnow = false;
 		}
 	}
