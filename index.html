@@ -20,7 +20,7 @@
 		</div>
 		<div class="footer">
 			<h3>
-				<a href='biweekly_timedoc.xlsx'>Download a timesheet</a>
+				<a href='biweekly_timedoc.xlsx'>Download a blank timesheet</a>
 			</h3>
 			<audio id="music" loop="true">
 				<source src="money.mp3" type="audio/mpeg">
@@ -29,55 +29,62 @@
 		</div>
 	</body>
 	<script type="text/javascript">
-	setInterval(function() {
-		updateTime();
-	}, 1000);
-
-	window.onresize = function() {
-		updateTimePosition();
-	}
-
-	updateTime();
-	updateTimePosition();
-
-	function updateTime() {
-		var months = ["January", "Februray", "March", "April", "May", "June", "July", "August", "September", "October", "Novemeber", "December"];
 		var today = new Date();
-		var timesheet = new Date(2015, 3, 29);
-		var timesheet1 = new Date(2015, 3, 30);
-		while (timesheet1 < today) {
-			timesheet.setDate(timesheet.getDate() + 14);
-			timesheet1.setDate(timesheet1.getDate() + 14);
-		}
-		var days = Math.ceil((timesheet.getTime() - today.getTime())/(86400000) - 1);
-		var hours = 24 - (((new Date().getHours()) + 1) % 24);
-		var minutes = (60 - ((new Date().getMinutes()) % 60)) - 1;
-		var seconds = (60 - ((new Date().getSeconds()) % 60)) - 1;
-		if (days == 0) {
-			document.getElementsByTagName("h1")[0].style.background = "rgba(255, 255, 255, 0.9)";
-			document.getElementsByTagName("h2")[0].style.background = "rgba(255, 255, 255, 0.9)";
-			document.getElementById("answerDiv").style.color = "#000000";
-			document.getElementById("next").style.color = "#000000";
-			document.getElementById("answer").innerHTML = "YES!";
-			document.getElementById("next").innerHTML = "Turn your timesheet in before the end of the day!"
-            enableSnow = true;
-            document.getElementById("music").play();
-		} else {
-			document.getElementById("next").innerHTML = "The next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + ", " + hours + " hour" + (hours === 1 ? "" : "s") + ", " + minutes + " minute" + (minutes === 1 ? "" : "s") + " and " + seconds + " second" + (seconds === 1 ? "" : "s");
-            enableSnow = false;
-		}
-	}
+        var timesheet = new Date(2015, 3, 29);
+        var timesheet1 = new Date(2015, 3, 30);
+        while (timesheet1 < today) {
+            timesheet.setDate(timesheet.getDate() + 14);
+            timesheet1.setDate(timesheet1.getDate() + 14);
+        }
 
-	function updateTimePosition() {
-		var answerDiv = document.getElementById("wrapper");
-		var transformation = "translateY(" + ((window.innerHeight / 2) - 150) + "px) translateZ(750px)";
-		answerDiv.style.webkitTransform = transformation;
-	    answerDiv.style.MozTransform = transformation;
-	    answerDiv.style.msTransform = transformation;
-	    answerDiv.style.OTransform = transformation;
-	    answerDiv.style.transform = transformation;
+		setInterval(function() {
+			updateTime();
+		}, 1000);
 
-	}
+		window.onresize = function() {
+			updateTimePosition();
+		}
+
+		updateTime();
+		updateTimePosition();
+
+		function updateTime() {
+			var months = ["January", "Februray", "March", "April", "May", "June", "July", "August", "September", "October", "Novemeber", "December"];
+			today = new Date();
+	        if (timesheet1 < today) {
+	            timesheet.setDate(timesheet.getDate() + 14);
+	            timesheet1.setDate(timesheet1.getDate() + 14);
+	        }
+	        var isToday = Math.ceil((timesheet.getTime() - today.getTime())/(86400000));
+	        var days = Math.ceil((timesheet.getTime() - today.getTime())/(86400000) - 1);
+			var hours = 24 - (((new Date().getHours()) + 1) % 24);
+			var minutes = (60 - ((new Date().getMinutes()) % 60)) - 1;
+			var seconds = (60 - ((new Date().getSeconds()) % 60)) - 1;
+			if (isToday == 0) {
+				document.getElementsByTagName("h1")[0].style.background = "rgba(255, 255, 255, 0.9)";
+				document.getElementsByTagName("h2")[0].style.background = "rgba(255, 255, 255, 0.9)";
+				document.getElementById("answerDiv").style.color = "#000000";
+				document.getElementById("next").style.color = "#000000";
+				document.getElementById("answer").innerHTML = "YES!";
+				document.getElementById("next").innerHTML = "Turn your timesheet in before the end of the day!"
+	            enableSnow = true;
+	            document.getElementById("music").play();
+			} else {
+				document.getElementById("next").innerHTML = "The next timesheet is due on " + months[timesheet.getMonth()] + " " + timesheet.getDate() + ", " + timesheet.getFullYear() + " which is in " + days + " day" + (days === 1 ? "" : "s") + ", " + hours + " hour" + (hours === 1 ? "" : "s") + ", " + minutes + " minute" + (minutes === 1 ? "" : "s") + " and " + seconds + " second" + (seconds === 1 ? "" : "s");
+	            enableSnow = false;
+			}
+		}
+
+		function updateTimePosition() {
+			var answerDiv = document.getElementById("wrapper");
+			var transformation = "translateY(" + ((window.innerHeight / 2) - 150) + "px) translateZ(750px)";
+			answerDiv.style.webkitTransform = transformation;
+		    answerDiv.style.MozTransform = transformation;
+		    answerDiv.style.msTransform = transformation;
+		    answerDiv.style.OTransform = transformation;
+		    answerDiv.style.transform = transformation;
+
+		}
 	</script>
     <script src="moneyfall.js"></script>
 </html>
